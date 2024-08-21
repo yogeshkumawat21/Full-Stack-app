@@ -3,6 +3,7 @@ package com.App.Yogesh.Services;
 import com.App.Yogesh.Models.Post;
 import com.App.Yogesh.Models.User;
 import com.App.Yogesh.Repository.PostRepository;
+import com.App.Yogesh.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,8 @@ public class  PostServiceImplementation implements PostService {
 
     @Autowired
     PostRepository postRepository;
-
+   @Autowired
+    UserRepository userRepository;
     @Autowired
     UserService userService;
     @Override
@@ -64,12 +66,36 @@ public class  PostServiceImplementation implements PostService {
     }
 
     @Override
-    public Post savedPost(Integer postId, Integer userId) {
-        return null;
+    public Post savedPost(Integer postId, Integer userId) throws Exception {
+        Post post = findPostById(postId);
+        User user = userService.findUserById(userId);
+        if(user.getSavedPost().contains(post))
+        {
+            user.getSavedPost().remove(post);
+        }
+        else
+        {
+            user.getSavedPost().add(post);
+        }
+        userRepository.save(user);
+        return post;
     }
 
     @Override
-    public Post likePost(Integer postId, Integer userId) {
-        return null;
+    public Post likePost(Integer postId, Integer userId) throws  Exception{
+        Post post = findPostById(postId);
+        User user = userService.findUserById(userId);
+        post.getLiked().add(user);
+
+
+        if(post.getLiked().contains(user))
+        {
+            post.getLiked().remove(user);
+        }
+        else
+        {
+            post.getLiked().add(user);
+        }
+        return postRepository.save(post);
     }
 }

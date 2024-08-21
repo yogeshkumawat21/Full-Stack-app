@@ -17,20 +17,34 @@ public class User {
     private String lastName;
     private String email;
 
-    public User(int id, String firstName, String lastName, String email, String password, List<Integer> followings, List<Integer> followers) {
-        super();
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.followings = followings;
-        this.followers = followers;
-    }
+
    public User(){};
     private String password ;
     private List<Integer> followers=new ArrayList<>();
+
+    public List<Post> getSavedPost() {
+        return savedPost;
+    }
+
+    public void setSavedPost(List<Post> savedPost) {
+        this.savedPost = savedPost;
+    }
+
     private List<Integer> followings=new ArrayList<>();
+
+    public User(String firstName, int id, String lastName, String email, String password, List<Integer> followers, List<Integer> followings, List<Post> savedPost) {
+        super();
+        this.firstName = firstName;
+        this.id = id;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.followers = followers;
+        this.followings = followings;
+        this.savedPost = savedPost;
+    }
+
+    private List<Post> savedPost= new ArrayList<>();
 
     public String getEmail() {
         return email;
