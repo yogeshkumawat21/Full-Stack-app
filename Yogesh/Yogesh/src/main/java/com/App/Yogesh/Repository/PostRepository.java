@@ -1,3 +1,9 @@
+/**
+ * Repository interface for performing CRUD operations on Post entities.
+ * Provides a custom query method to find posts by a specific user ID.
+ */
+
+
 package com.App.Yogesh.Repository;
 
 import com.App.Yogesh.Models.Post;

@@ -11,53 +11,55 @@ import java.util.Optional;
 
 @RestController
 public class UserController {
-    @Autowired
-    UserRepository userRepository;
 
     @Autowired
-    UserService userService;
+    private UserRepository userRepository;
 
-    @GetMapping("/users")
-     public List<User> getUsers()
-     {
-         List<User> users = userRepository.findAll();
-         return users;
-     }
-    @GetMapping("/users/{userId}")
-    public Optional<User> getUserById(@PathVariable("userId") Integer id ) throws Exception {
-           return userRepository.findById(id);
+    @Autowired
+    private UserService userService;
+
+    /**
+     * Retrieves all users.
+     */
+    @GetMapping("/api/users")
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
-     @PostMapping("/createUsers")
-     public User createUser(@RequestBody User user)
-     {
-
-         User savedUser = userService.registeruser(user);
-         return savedUser;
-     }
-
-      @PutMapping("/updateUsers/{userId}")
-     public User updateUser(@RequestBody User user , @PathVariable Integer userId ) throws Exception
-     {
-        User savedUser=userService.updateUser(user,userId);
-        return savedUser;
-     }
-
-     @PutMapping("/follow/{userId1}/{userId2}")
-     public User followUserHandler(@PathVariable Integer userId1 , @PathVariable Integer userId2) throws Exception {
-         User user =userService.followUser(userId1,userId2);
-
-         return user;
-     }
-
-     @GetMapping("/users/search")
-     public List<User> searchUser(@RequestParam("query") String query)
-     {
-         List<User> users= userService.searchUser((query));
-         return users;
-     }
-     }
+    /**
+     * Retrieves a specific user by their ID.
+     */
+    @GetMapping("/api/users/{userId}")
+    public Optional<User> getUserById(@PathVariable("userId") Integer id) throws Exception {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            throw new Exception("User not found with ID " + id);
+        }
+        return user;
+    }
 
 
+    /**
+     * Updates user information for a specific user ID.
+     */
+    @PutMapping("/api/updateUsers/{userId}")
+    public User updateUser(@RequestBody User user, @PathVariable Integer userId) throws Exception {
+        return userService.updateUser(user, userId);
+    }
 
+    /**
+     * Allows one user to follow another user.
+     */
+    @PutMapping("/api/follow/{userId1}/{userId2}")
+    public User followUserHandler(@PathVariable Integer userId1, @PathVariable Integer userId2) throws Exception {
+        return userService.followUser(userId1, userId2);
+    }
 
+    /**
+     * Searches for users based on a query string.
+     */
+    @GetMapping("/api/users/search")
+    public List<User> searchUser(@RequestParam("query") String query) {
+        return userService.searchUser(query);
+    }
+}

@@ -1,9 +1,14 @@
+/**
+ * Represents a social media post with associated details such as image, caption, video,
+ * the user who created the post, creation timestamp, and a list of users who liked the post.
+ */
+
+
+
 package com.App.Yogesh.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,15 +17,19 @@ import java.util.List;
 @Entity
 public class Post {
 
-
-
     public  Post(){};
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String image;
     private String Caption;
+    private String video ;
+    @ManyToOne
+    private  User user ;
+    private LocalDateTime createdAt;
 
+    @OneToMany
+    private List<User> liked = new ArrayList<>();
 
     public Post(Integer id, String image, String caption, String video, User user, LocalDateTime createdAt, List<User> liked) {
         super();
@@ -33,10 +42,6 @@ public class Post {
         this.liked = liked;
     }
 
-    private String video ;
-    private  User user ;
-    private LocalDateTime createdAt;
-
     public List<User> getLiked() {
         return liked;
     }
@@ -45,14 +50,14 @@ public class Post {
         this.liked = liked;
     }
 
-    private List<User> liked = new ArrayList<>();
+
 
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
-        image = image;
+        this.image = image;
     }
 
     public String getCaption() {

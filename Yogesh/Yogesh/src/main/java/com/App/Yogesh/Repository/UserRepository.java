@@ -1,3 +1,9 @@
+/**
+ * Repository interface for performing CRUD operations on User entities.
+ * Provides a custom query method to find user by a specific query.
+ */
+
+
 package com.App.Yogesh.Repository;
 
 import com.App.Yogesh.Models.User;

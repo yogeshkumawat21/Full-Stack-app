@@ -12,52 +12,62 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class  PostServiceImplementation implements PostService {
+public class PostServiceImplementation implements PostService {
 
     @Autowired
-    PostRepository postRepository;
-   @Autowired
-    UserRepository userRepository;
+    private PostRepository postRepository;
+
     @Autowired
-    UserService userService;
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
     @Override
     public Post createNewPost(Post post, Integer userId) throws Exception {
-        Post newPost = new Post();
+        // Find the user who is creating the post
         User user = userService.findUserById(userId);
+
+        // Set up the new post
+        Post newPost = new Post();
         newPost.setCaption(post.getCaption());
         newPost.setImage(post.getImage());
         newPost.setVideo(post.getVideo());
-       // newPost.setCreatedAt(new LocalDateTime.now();
+        newPost.setCreatedAt(LocalDateTime.now()); // Set the creation time
         newPost.setUser(user);
-        return newPost;
+
+        // Save the new post to the repository
+        return postRepository.save(newPost);
     }
 
     @Override
     public String deletePost(Integer postId, Integer userId) throws Exception {
+        // Find the post and user
         Post post = findPostById(postId);
         User user = userService.findUserById(userId);
-        if(post.getUser().getId()!=user.getId())
-        {
-           throw new Exception("you can't delete another users post ");
+
+        // Check if the user owns the post
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new Exception("You can't delete another user's post.");
         }
+
+        // Delete the post
         postRepository.delete(post);
-        return "post deleted successfully";
+        return "Post deleted successfully";
     }
 
     @Override
     public List<Post> findPostByUserId(Integer userId) {
         return postRepository.findPostByUserId(userId);
-
     }
 
     @Override
     public Post findPostById(Integer postId) throws Exception {
         Optional<Post> opt = postRepository.findById(postId);
-        if(opt.isEmpty())
-        {
-            throw new Exception("post not found with id "+postId);
+        if (opt.isEmpty()) {
+            throw new Exception("Post not found with ID " + postId);
         }
-        return  opt.get();
+        return opt.get();
     }
 
     @Override
@@ -67,35 +77,36 @@ public class  PostServiceImplementation implements PostService {
 
     @Override
     public Post savedPost(Integer postId, Integer userId) throws Exception {
+        // Find the post and user
         Post post = findPostById(postId);
         User user = userService.findUserById(userId);
-        if(user.getSavedPost().contains(post))
-        {
+
+        // Toggle the saved status of the post
+        if (user.getSavedPost().contains(post)) {
             user.getSavedPost().remove(post);
-        }
-        else
-        {
+        } else {
             user.getSavedPost().add(post);
         }
+
+        // Save the updated user
         userRepository.save(user);
         return post;
     }
 
     @Override
-    public Post likePost(Integer postId, Integer userId) throws  Exception{
+    public Post likePost(Integer postId, Integer userId) throws Exception {
+        // Find the post and user
         Post post = findPostById(postId);
         User user = userService.findUserById(userId);
-        post.getLiked().add(user);
 
-
-        if(post.getLiked().contains(user))
-        {
+        // Toggle the like status of the post
+        if (post.getLiked().contains(user)) {
             post.getLiked().remove(user);
-        }
-        else
-        {
+        } else {
             post.getLiked().add(user);
         }
+
+        // Save the updated post
         return postRepository.save(post);
     }
 }
