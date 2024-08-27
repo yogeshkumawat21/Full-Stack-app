@@ -2,6 +2,7 @@ package com.App.Yogesh.Services;
 
 import com.App.Yogesh.Models.User;
 import com.App.Yogesh.Repository.UserRepository;
+import com.App.Yogesh.config.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,19 +45,19 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public User followUser(Integer userId1, Integer userId2) throws Exception {
-        User user1 = findUserById(userId1);
+    public User followUser(Integer reqUserId, Integer userId2) throws Exception {
+        User reqUser = findUserById(reqUserId);
         User user2 = findUserById(userId2);
 
         // Add the entire user object instead of just the ID
-        user2.getFollowers().add(user1.getId());  // Assuming followers is a List<User>
-        user1.getFollowings().add(user2.getId()); // Assuming followings is a List<User>
+        user2.getFollowers().add(reqUser.getId());  // Assuming followers is a List<User>
+        reqUser.getFollowings().add(user2.getId()); // Assuming followings is a List<User>
 
         // Save the updated users
-        userRepository.save(user1);
+        userRepository.save(reqUser);
         userRepository.save(user2);
 
-        return user1;  // Return the updated user1 with new followings
+        return reqUser;  // Return the updated user1 with new followings
     }
 
 
@@ -81,6 +82,10 @@ public class UserServiceImplementation implements UserService {
         {
             oldUser.setEmail(user.getEmail());
         }
+        if(user.getGender()!=null)
+        {
+            oldUser.setGender(user.getGender());
+        }
         User updatedUser = userRepository.save(oldUser
         );
 
@@ -90,5 +95,13 @@ public class UserServiceImplementation implements UserService {
     @Override
     public List<User> searchUser(String query) {
        return userRepository.searchUser(query);
+    }
+
+    @Override
+    public User findUserByJwt(String jwt) {
+        String email = JwtProvider.getEmailFromJwtToken(jwt);
+        User user = userRepository.findByEmail(email);
+        return user;
+
     }
 }

@@ -19,6 +19,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String firstName;
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    private String gender;
     private String lastName;
     private String email;
     private List<Integer> followings=new ArrayList<>();
@@ -42,9 +52,10 @@ public class User {
 
 
 
-    public User(String firstName, int id, String lastName, String email, String password, List<Integer> followers, List<Integer> followings, List<Post> savedPost) {
+    public User(String firstName, int id, String lastName, String email, String password,String gender, List<Integer> followers, List<Integer> followings, List<Post> savedPost) {
         super();
         this.firstName = firstName;
+        this.gender=gender;
         this.id = id;
         this.lastName = lastName;
         this.email = email;

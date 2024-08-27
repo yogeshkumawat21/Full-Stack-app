@@ -42,17 +42,21 @@ public class UserController {
     /**
      * Updates user information for a specific user ID.
      */
-    @PutMapping("/api/updateUsers/{userId}")
-    public User updateUser(@RequestBody User user, @PathVariable Integer userId) throws Exception {
-        return userService.updateUser(user, userId);
+    @PutMapping("/api/users")
+    public User updateUser(@RequestHeader("Authorization")String jwt) throws Exception {
+        User reqUser = userService.findUserByJwt(jwt);
+        User updateUser= userService.findUserByJwt(jwt);
+        return updateUser;
     }
 
     /**
      * Allows one user to follow another user.
      */
-    @PutMapping("/api/follow/{userId1}/{userId2}")
-    public User followUserHandler(@PathVariable Integer userId1, @PathVariable Integer userId2) throws Exception {
-        return userService.followUser(userId1, userId2);
+    @PutMapping("/api/users/follow/{userId2}")
+    public User followUserHandler(@RequestHeader ("Authorization") String jwt,  @PathVariable Integer userId2) throws Exception {
+        User reqUser= userService.findUserByJwt(jwt);
+        User user = userService.followUser(reqUser.getId(),userId2);
+        return user;
     }
 
     /**
@@ -60,6 +64,16 @@ public class UserController {
      */
     @GetMapping("/api/users/search")
     public List<User> searchUser(@RequestParam("query") String query) {
-        return userService.searchUser(query);
+        List<User> users = userService.searchUser(query);
+        return users;
     }
+
+    @GetMapping("/api/users/profile")
+    public User getUserFromToken(@RequestHeader("Authorization")String jwt){
+        System.out.println("jwt----------"+jwt);
+        User user = userService.findUserByJwt(jwt);
+        user.setPassword(null);
+        return user;
+    }
+
 }

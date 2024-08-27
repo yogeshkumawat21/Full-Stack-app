@@ -14,13 +14,13 @@ public class JwtProvider {
     private static final SecretKey key = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
 
     public static String generateToken(Authentication auth) {
-        return Jwts.builder()
-                .setIssuer("Yogesh")
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + 98329374))
-                .claim("email", auth.getName())
+        String jwt = Jwts.builder()
+                .setIssuer("Yogesh").setIssuedAt(new Date())
+                .setExpiration(new Date(new Date().getTime()+34234233))
+                .claim("email",auth.getName())
                 .signWith(key)
                 .compact();
+        return jwt;
     }
 
     public static String getEmailFromJwtToken(String jwt) {
