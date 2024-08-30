@@ -22,6 +22,7 @@ public class AppConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.requestMatchers("/api/**").authenticated()
                                 .anyRequest().permitAll())
+                //.httpBasic().and()
                 .addFilterBefore(new jwtValidator(), BasicAuthenticationFilter.class)
 
                 .csrf(csrf -> csrf.disable());
